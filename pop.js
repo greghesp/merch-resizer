@@ -1,5 +1,7 @@
 const sharp = require('sharp');
 const toConvert = './toConvert';
+const getColors = require('get-image-colors')
+
 const temp = './temp';
 const pops = './popsockets';
 const fs = require('fs');
