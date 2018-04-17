@@ -24,7 +24,7 @@ const ShapeUtil = {
 const files = fs.readdirSync(toConvert);
 async.each(files, function(file, callback) {
     console.log('Processing file ' + file);
-    if(file != '.DS_Store'){
+    if(file != '.DS_Store' || file != '.gitignore'){
           sharp(`${toConvert}/${file}`)
             .trim()
             .resize(350, 350)
@@ -43,7 +43,7 @@ async.each(files, function(file, callback) {
   const tempFiles = fs.readdirSync(temp);
   async.each(tempFiles, function(file, callback) {
     console.log(`Generating Popsocket for ${file}`);
-    if(file != '.DS_Store'){
+    if(file != '.DS_Store' || file != '.gitignore'){
       ShapeUtil.drawCircle( 485,  485)
       .then(function (resultSVG) {
         sharp(new Buffer(resultSVG))
