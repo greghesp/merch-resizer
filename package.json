@@ -1,0 +1,19 @@
+{
+  "name": "image",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Greg Hesp <greg.hesp@gmail.com> (http://www.greghesp.com)",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.0",
+    "firebase": "^4.10.0",
+    "sharp": "^0.19.0",
+    "svg.js": "^2.6.4",
+    "svgdom": "0.0.15",
+    "yargs": "^11.0.0"
+  }
+}
