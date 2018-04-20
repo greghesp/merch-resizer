@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.6.0",
+    "bluebird": "^3.5.1",
     "complementary-colors": "^1.0.5",
+    "exceljs": "^1.2.1",
     "get-image-colors": "^1.8.1",
     "recursive-readdir": "^2.2.2",
     "rgb-hex": "^2.1.0",
