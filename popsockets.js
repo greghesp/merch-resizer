@@ -2,8 +2,8 @@ const sharp = require('sharp');
 const toConvert = './toConvert';
 const getColors = require('get-image-colors')
 const recursive = require("recursive-readdir");
-const Promise = require('bluebird');
 const Excel = require('exceljs');
+const dir = require('node-dir')
 
 const temp = './temp';
 const pops = './popsockets';
@@ -14,6 +14,8 @@ const async = require('async');
 const document = window.document;
 const argv = require('yargs').argv
 
+
+
 const colour = argv.bg ? argv.bg : '000';
 const folder = argv.dir ? argv.dir : null;
 const brand = argv.brand ? argv.brand : null;
@@ -23,19 +25,30 @@ if(!folder) return console.log("Specify a folder.  Add --dir=\"C:\\Merch Designs
 
  getFiles(folder)
  .then(files => {
-   resizeImages(files)
+   ignoreFiles(files, function(files){
+     resizeImages(files)
+   })
  })
+ .catch(e => console.log(e))
 
 function getFiles(folder){
-  return recursive(folder, [ignoreFiles])
+  return new Promise((resolve, reject) => {
+      dir.files(folder, function(e,f){
+      resolve(f)
+    })
+  })
 }
 
-function ignoreFiles(file,stats){
-  const slash = file.substr(file.lastIndexOf(`/`)+1),
-        name = slash.toLowerCase(),
-        fExt = name.substr(name.length - 4),
-        hoodie = name.includes('hoodie');
-  return fExt === '.png' && hoodie === false ? false : true
+function ignoreFiles(files, cb){
+  let finalFiles = [];
+    for(i=0; i < files.length; i++){
+      const slash = isWin ? files[i].substr(files[i].lastIndexOf("\\")+1) : files[i].substr(files[i].lastIndexOf(`/`)+1),
+            name = slash.toLowerCase(),
+            fExt = name.substr(name.length - 4),
+            hoodie = name.includes('hoodie');
+      if(fExt === '.png' && hoodie === false) finalFiles.push(files[i])
+    }
+    cb(finalFiles)
 }
 
 function drawCircle(){
@@ -47,7 +60,7 @@ function drawCircle(){
 }
 
 function resizeImages(files){
-    async.eachLimit(files, 1, (file, callback) => {
+    async.eachLimit(files, 10, (file, callback) => {
       const slash = isWin ? file.substr(file.lastIndexOf("\\")+1) : file.substr(file.lastIndexOf(`/`)+1);
       const final = slash.substr(0, slash.length-4);
       console.log(`Processing file ${final}`);
@@ -56,7 +69,7 @@ function resizeImages(files){
         .resize(350,350)
         .background({r: 0, g: 0, b: 0, alpha: 0})
         .embed()
-        .toFile(`./temp/${final}-temp.png`)
+        .toFile(`./temp/${final}.png`)
         .then(() => {
           console.log(`Finished processing ${final}`);
           callback()
@@ -79,9 +92,10 @@ function getTempFiles(type) {
 }
 
 function createPopsocket(files) {
-  async.eachLimit(files, 1, (file, callback) => {
+  async.eachLimit(files, 10, (file, callback) => {
     const slash = isWin ? file.substr(file.lastIndexOf("\\")+1) : file.substr(file.lastIndexOf(`/`)+1);
     const final = slash.substr(0, slash.length-4);
+    if(slash === ".gitignore") return callback();
     console.log(`Generating Popsocket for ${file}`);
     drawCircle()
       .then(function (resultSVG) {
@@ -94,7 +108,6 @@ function createPopsocket(files) {
           callback()
         })
         .catch(err => {
-          console.log(err)
           callback()
         })
   }, e => {
@@ -120,6 +133,7 @@ function createExcelDoc(files) {
 
   async.eachLimit(files, 1, (file, callback) => {
     const final = isWin ? file.substr(file.lastIndexOf("\\")+1) : file.substr(file.lastIndexOf(`/`)+1);
+    if(final === ".gitignore") return callback();
     sheet.addRow({
       asin: null,
       filename: final,

@@ -14,6 +14,7 @@
     "complementary-colors": "^1.0.5",
     "exceljs": "^1.2.1",
     "get-image-colors": "^1.8.1",
+    "node-dir": "^0.1.17",
     "recursive-readdir": "^2.2.2",
     "rgb-hex": "^2.1.0",
     "sharp": "^0.20.1",
